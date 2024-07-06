@@ -587,18 +587,36 @@ function geoJSONInfoHgo(data, color) {
 
 
 var PruebaBren = geoJSONPruebaBren(pruenaZon, '#900C3F');
+
 function geoJSONPruebaBren(data, color) {
   return L.geoJSON(data, {
     style: function (feature) {
+      var fillColor;
+      if (feature.properties.ZonPri === 'Urbano') {
+        fillColor = 'green';
+      } else if (feature.properties.ZonPri === 'Urbanizable') {
+        fillColor = 'pink';
+      } else {
+        fillColor = 'rgba(0, 0, 0, 0.4)'; // Color por defecto
+      }
+
       return {
-        fillColor: 'rgba(0, 0, 0, 0.4)',
+        fillColor: fillColor,
         color: color,
         weight: 2.6,
         fillOpacity: 0.6
       };
     },
     onEachFeature: function (feature, layer) {
-      
+      // Construir el contenido del popup con todos los campos de la feature
+      var popupContent = "<b>Properties:</b><br>";
+      for (var key in feature.properties) {
+        if (feature.properties.hasOwnProperty(key)) {
+          popupContent += "<b>" + key + ":</b> " + feature.properties[key] + "<br>";
+        }
+      }
+      // Agregar el popup a la capa
+      layer.bindPopup(popupContent);
     }
   }).addTo(map);
 }
